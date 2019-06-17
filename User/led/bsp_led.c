@@ -71,7 +71,7 @@ void LED_RGB111(uint8_t rgb111)
 	if(rgb111&0x4)
 		GPIO_ResetBits(LED3_GPIO_PORT,LED3_PIN);
 	else
-		//GPIO_SetBits(LED3_GPIO_PORT,LED3_PIN);
+		GPIO_SetBits(LED3_GPIO_PORT,LED3_PIN);
 }
 /*********************************************END OF FILE**********************/
 
