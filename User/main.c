@@ -60,7 +60,7 @@ int main(void)
 		if(getSn_SR(SOCK_TCPS) == SOCK_INIT)
 			listen(SOCK_TCPS);
 	}
-	ADCx_Init();                  /*ADC模式初始化*/
+	//ADCx_Init();                  /*ADC模式初始化*/
 	W5500_INT_EXTI_Config();
 	setSIMR(0x01);
 	setSn_IMR(SOCK_TCPS,Sn_IR_RECV);
