@@ -45,7 +45,7 @@ void PWM_TIM_Init(uint16_t arr,uint16_t psc)
 	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure); //调用函数初始化时基结构体
 	
 	/*输出比较结构体初始化*/
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //配置为PWM模式1
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2; //配置为PWM模式1
  	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //输出使能
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性低
 	TIM_OC1Init(PWM_TIM, &TIM_OCInitStructure);               //调用函数初始化通道1输出比较结构体
