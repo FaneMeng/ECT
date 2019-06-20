@@ -91,7 +91,7 @@ static void AD9854_WR_Byte(uint8_t AD9854_Addr,uint8_t AD9854_FCW)
 	set_AD9854_Addr(AD9854_Addr);
 	set_AD9854_DataBus(AD9854_FCW);
 	AD9854_WRB=0;
-    AD9854_WRB=1;
+  AD9854_WRB=1;
 }
 
 /*
