@@ -30,7 +30,7 @@
 #include "bsp_pwm.h"
 
 
-
+ 
 int main(void)
 { 	
 	systick_init(72);										/*初始化Systick工作时钟*/
@@ -44,11 +44,11 @@ int main(void)
 	/*pwm初始化*/
 	PWM_TIM_Init(15,8); // PWM 信号的频率 F = TIM_CLK/{(ARR+1)*(PSC+1)}
 	/*设置AD9854输出正弦波的频率*/
-	set_AD9854(2);
+	set_AD9854(5);
 	/*设置占空比*/
 	PWM_DutyRatio(PWM_TIM,6); //占空比为CCR/(ARR+1)
   /*设置DAC输出的数据*/
-	DAC_Setdata(4095, 1023); 
+	DAC_Setdata(2042, 2070); 
 	reset_w5500();											/*硬复位W5500*/
 	set_w5500_mac();										/*配置MAC地址*/
 	set_w5500_ip();											/*配置IP地址*/
@@ -68,7 +68,7 @@ int main(void)
 	while(1)                            /*循环执行的函数*/ 
 	
 	{
-	  
+
 	}
 } 
 
