@@ -35,12 +35,15 @@
 #include "w5500_int.h"
 #include "bsp_AD9854.h"
 #include "bsp_pwm.h"
+#include "bsp_dac.h"
 
 extern __IO uint16_t ADC_ConvertedValue[NOFCHANEL];
+__IO uint8_t equilflag = 0;
 uint8_t buffer[4]; 
 uint16_t len,m;        //控制子长度
 uint16_t i,j,k = 0;
-uint8_t CtrlWord[2]={2,2}; //接收上位机传来的控制字
+uint8_t CtrlWord[2]={3,3}; //接收上位机传来的控制字
+uint16_t DAC1Val,DAC2Val = 2048;
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */
@@ -174,16 +177,25 @@ void TIM2_IRQHandler(void)
   * @param  None
   * @retval None
   */
+void(*p_Balance_FOR_XY)(unsigned short,unsigned short)=balance_A_X;
 void DMA1_Channel1_IRQHandler(void)
 {
 	if(DMA_GetITStatus(DMA1_IT_TC1)!=RESET)  //确认产生了中断
 	{
 	
-		buffer[0] = (uint8_t)((ADC_ConvertedValue[0])&(0x00ff));
-		buffer[1] = (uint8_t)((((ADC_ConvertedValue[0])&(0xff00))>>8)+0x10);
-		buffer[2] = (uint8_t)((ADC_ConvertedValue[1])&(0x00ff));
-		buffer[3] = (uint8_t)((((ADC_ConvertedValue[1])&(0xff00))>>8)+0x20);				
+		buffer[1] = (uint8_t)((ADC_ConvertedValue[0])&(0x00ff));
+		buffer[0] = (uint8_t)((((ADC_ConvertedValue[0])&(0xff00))>>8)+0x10);
+		buffer[3] = (uint8_t)((ADC_ConvertedValue[1])&(0x00ff));
+		buffer[2] = (uint8_t)((((ADC_ConvertedValue[1])&(0xff00))>>8)+0x20);				
 		send(SOCK_TCPS,buffer,4);
+		
+		if(equilflag == 1)
+		{
+			//balance(ADC_ConvertedValue[0],ADC_ConvertedValue[1]);
+			//void(*p_Balance_FOR_XY)(unsigned short,unsigned short);
+			//p_Balance_FOR_XY=balance_A_X;
+			(*p_Balance_FOR_XY)(ADC_ConvertedValue[0],ADC_ConvertedValue[1]);
+		}
 
 		DMA_ClearITPendingBit(DMA1_IT_TC1);
 		
@@ -199,7 +211,7 @@ void W5500_IRQHandler(void)
 			if(getSn_IR(SOCK_TCPS) & Sn_IR_CON)
 			{
 				setSn_IR(SOCK_TCPS, Sn_IR_RECV|Sn_IR_CON);								          /*清除接收中断标志位*/
-				set_AD9854(4);
+				//set_AD9854(4);
 			}
 			len=getSn_RX_RSR(SOCK_TCPS);									            /*定义len为已接收数据的长度*/
 			if(len>0)
@@ -210,14 +222,35 @@ void W5500_IRQHandler(void)
 			{
 				i=CtrlWord[1];
 				set_AD9854(i);
-				CtrlWord[0]=2;
+				CtrlWord[0]=3;
 			}
 			else if(CtrlWord[0]==1)
 			{
 				j=CtrlWord[1];
 				PWM_DutyRatio(PWM_TIM,j);
-				CtrlWord[0]=2;
+				CtrlWord[0]=3;
 			}
+		  else if(CtrlWord[0] == 2)
+			{
+				equilflag = 1;
+				CtrlWord[0] = 3;
+			}
+			else
+			{
+				i = CtrlWord[0]>>4;
+				if(i == 4)
+				{
+					DAC1Val = (uint16_t)((CtrlWord[0] & 0x0f)<<8) + CtrlWord[1];
+					DAC_Setdata(DAC1Val,DAC2Val);
+				}
+				else if(i == 5)
+				{
+					DAC2Val = (uint16_t)((CtrlWord[0] & 0x0f)<<8) + CtrlWord[1];
+					DAC_Setdata(DAC1Val,DAC2Val);
+				}
+				CtrlWord[0] = 3;
+			}
+
 			EXTI_ClearITPendingBit(WIZ_INT_EXTI_LINE); 
 	}
 }
