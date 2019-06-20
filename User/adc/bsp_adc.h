@@ -40,6 +40,12 @@
 #define    ADC_TIM_Period            (10000-1)
 #define    ADC_TIM_Prescaler         71
 
+//#define 	 max_value 								 2668
+//#define 	 min_value 								 1400
+#define 	 max_value 								 4095
+#define 	 min_value 								 0
+
+
 
 /**************************º¯ÊýÉùÃ÷********************************/
 void               ADCx_Init                               (void);

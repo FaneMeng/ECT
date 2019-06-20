@@ -141,7 +141,7 @@ static void ADCx_Mode_Config(void)
 	// 初始化ADC
 	ADC_Init(ADC_x, &ADC_InitStructure);
 	
-	// 配置ADC时钟Ｎ狿CLK2的8分频，即9MHz
+	// 配置ADC时钟LK2的8分频，即9MHz
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6); 
 	
 	// 配置ADC 通道的转换顺序和采样时间
